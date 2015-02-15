@@ -9,6 +9,7 @@ var yMaxLimit = 80;
 
 private var x = 0.0;
 private var y = 0.0;
+private var z = 0.0;
 
 @script AddComponentMenu("Camera-Control/Mouse Orbit")
 
@@ -36,6 +37,7 @@ function LateUpdate () {
         transform.rotation = rotation;
         transform.position = position;
     }
+    
 }
 
 static function ClampAngle (angle : float, min : float, max : float) {
