@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class MouseControl : MonoBehaviour {
 
+	public bool playerAnchor = false;
 	public Transform target;
 	public float distance = 10f;
 	public float xSpeed = 0f;
@@ -12,6 +14,10 @@ public class MouseControl : MonoBehaviour {
 
 	public float orbitMultiplier = 0.02f;
 	public float zoomMultiplier = 1f;
+
+	// Move
+	Vector3 lastMousePosition;
+	public float moveMultiplier = 0.1f;
 
 	float x = 0f;
 	float y = 0f;
@@ -28,15 +34,16 @@ public class MouseControl : MonoBehaviour {
 		y = _ang.x;
 		distance = Vector3.Distance(target.position, transform.position);
 
-		if (GetComponent<Rigidbody>()) {
-			GetComponent<Rigidbody>().freezeRotation = true;
-		}
+		lastMousePosition = Input.mousePosition;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
-		DetectOrbit();
+		if (playerAnchor) {
+			DetectOrbit();
+		}
 		DetectZoom();
+		DetectMove();
 	}
 
 	void DetectOrbit () {
@@ -66,11 +73,36 @@ public class MouseControl : MonoBehaviour {
 
 	void DetectZoom () {
 		var mouseWheelInput = Input.GetAxis("Mouse ScrollWheel");
-//		var pos = Camera.main.transform.position;
-//		pos.y += zoomMultiplier * mouseWheelInput;
-//		Camera.main.transform.position = pos;
-		distance += zoomMultiplier * mouseWheelInput;
-		SetTransform();
+		var change = zoomMultiplier * mouseWheelInput;
+
+		if (!Mathf.Approximately(change, 0f)) {
+			var pos = Camera.main.transform.position;
+			pos.y += zoomMultiplier * mouseWheelInput;
+			Camera.main.transform.position = pos;
+		}
+	}
+
+	void DetectMove () {
+
+		if (Input.GetMouseButtonDown(0)) {
+			lastMousePosition = Input.mousePosition;
+		}
+
+		if (!Input.GetMouseButton(0)) {
+			return;
+		}
+
+		if (EventSystem.current.IsPointerOverGameObject()) {
+			return;
+		}
+
+		var camPos = Camera.main.transform.position;
+		var delta = lastMousePosition - Input.mousePosition;
+		lastMousePosition = Input.mousePosition;
+		camPos.x += delta.x * moveMultiplier;
+		camPos.z += delta.y * moveMultiplier;
+
+		Camera.main.transform.position = camPos;
 	}
 
 	float ClampAngle (float angle, float min, float max) {
