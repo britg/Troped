@@ -4,6 +4,8 @@
 // Copyright (c) 2013 Gamelogic (Pty) Ltd       //
 //----------------------------------------------//
 
+
+
 using UnityEngine;
 
 namespace Gamelogic.Grids
@@ -22,7 +24,7 @@ namespace Gamelogic.Grids
 		private readonly float hexWidth;
 
 		/**
-			\param cellDimensions The verticcal and horozontal distance between cells 
+			\param cellDimensions The vertical and horizontal distance between cells 
 			(and thus, in fact a bit smaller in width than the actual cell).
 		*/
 		public FlatHexMap(Vector2 cellDimensions) :

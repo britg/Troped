@@ -1,6 +1,11 @@
+#if UNITY_WINRT
+#undef GL_SUPPORTS_REFLECTION //Just in case
+#else
+#define GL_SUPPORTS_REFLECTION
+#endif
+
 using System.Linq;
 using UnityEngine;
-using System;
 using System.Collections.Generic;
 using Object = UnityEngine.Object;
 
@@ -17,7 +22,7 @@ namespace Gamelogic
 		
 
 		#region Typesafe instatiation
-
+#if !UNITY_5
 		/**
 			Instantiates an object.
 		*/
@@ -25,6 +30,7 @@ namespace Gamelogic
 		{
 			return (T) Object.Instantiate(obj);
 		}
+#endif
 
 		/**
 			Instantiates an object at the 
@@ -68,6 +74,7 @@ namespace Gamelogic
 
 			return newObj;
 		}
+
 
 		/**
 			Instantiates a GameObject.
@@ -164,6 +171,7 @@ namespace Gamelogic
 		}
 		#endregion
 
+#if GL_SUPPORTS_REFLECTION
 		#region Typesafe, but potentially slow, methods for scheduling
 
 		/**
@@ -171,7 +179,7 @@ namespace Gamelogic
 
 			The action must be a method of the calling class.
 		*/
-		public static void Invoke(this MonoBehaviour component, Action action, float time)
+		public static void Invoke(this MonoBehaviour component, System.Action action, float time)
 		{
 			component.Invoke(action.Method.Name, time);
 		}
@@ -182,7 +190,7 @@ namespace Gamelogic
 
 			The action must be a method of the calling class.
 		*/
-		public static void InvokeRepeating(this MonoBehaviour component, Action action, float time, float repeatTime)
+		public static void InvokeRepeating(this MonoBehaviour component, System.Action action, float time, float repeatTime)
 		{
 			component.InvokeRepeating(action.Method.Name, time, repeatTime);
 		}
@@ -191,7 +199,7 @@ namespace Gamelogic
 			Invokes an action after a random time between the minimum and 
 			maximum times given.
 		*/
-		public static void InvokeRandom(this MonoBehaviour component, Action action, float minTime, float maxTime)
+		public static void InvokeRandom(this MonoBehaviour component, System.Action action, float minTime, float maxTime)
 		{
 			var time = UnityEngine.Random.value * (maxTime - minTime) + minTime;
 
@@ -201,7 +209,7 @@ namespace Gamelogic
 		/**
 			Cancels the action if it was scheduled.
 		*/
-		public static void CancelInvoke(this MonoBehaviour component, Action action)
+		public static void CancelInvoke(this MonoBehaviour component, System.Action action)
 		{
 			component.CancelInvoke(action.Method.Name);
 		}
@@ -209,12 +217,13 @@ namespace Gamelogic
 		/**
 			Returns whether an invoke is pending on an action.
 		*/
-		public static bool IsInvoking(this MonoBehaviour component, Action action)
+		public static bool IsInvoking(this MonoBehaviour component, System.Action action)
 		{
 			return component.IsInvoking(action.Method.Name);
 		}
 
 		#endregion
+#endif
 
 		#region Children
 		public static GameObject FindChild(this MonoBehaviour component, string childName)
@@ -241,6 +250,51 @@ namespace Gamelogic
 			}
 
 			return null;
+		}
+
+		/**
+			Finds a component of the type T in on the same object, or on a child down the hierarchy. This method also works
+			in the editor and when the game object is inactive.
+
+			@version_e_1_1
+
+		*/
+		public static T GetComponentInChildrenAlways<T>(this MonoBehaviour component) where T : MonoBehaviour
+		{
+			foreach (var child in component.transform.SelfAndAllChildren())
+			{
+				var componentInChild = child.GetComponent<T>();
+
+				if (componentInChild != null)
+				{
+					return componentInChild;
+				}
+			}
+
+			return null;
+		}
+
+		/**
+			Finds all components of the type T on the same object and on a children down the hierarchy. This method also works
+			in the editor and when the game object is inactive.
+
+			@version_e_1_1
+		*/
+		public static T[] GetComponentsInChildrenAlways<T>(this MonoBehaviour component) where T : MonoBehaviour
+		{
+			var components = new List<T>();
+
+			foreach (var child in component.transform.SelfAndAllChildren())
+			{
+				var componentsInChild = child.GetComponents<T>();
+
+				if (componentsInChild != null)
+				{
+					components.AddRange(componentsInChild);
+				}
+			}
+
+			return components.ToArray();
 		}
 		#endregion
 

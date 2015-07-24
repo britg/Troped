@@ -25,7 +25,7 @@ namespace Gamelogic.Grids
 
 				foreach(var point in grid)
 				{
-					var cell = Instaitate(cellPrefab);
+					var cell = Instantiate(cellPrefab);
 					cell.transform.localPosition = map[point];
 				}
 			}

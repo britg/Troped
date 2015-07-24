@@ -1,13 +1,13 @@
 //----------------------------------------------//
 // Gamelogic Grids                              //
 // http://www.gamelogic.co.za                   //
-// Copyright (c) 2013-2014 Gamelogic (Pty) Ltd  //
+// Copyright (c) 2013-2015 Gamelogic (Pty) Ltd  //
 //----------------------------------------------//
 
 /**
 	@mainpage Grids API Documentation
-
-	Grids is a library for Unity Game Engine that allows you to setup 
+	
+Grids is a library for Unity Game Engine that allows you to setup 
 	a variety of grids rapidly. It supports a variety of grid types, 
 	including hexagonal and triangular grids. It’s easy to set 
 	your grid up in some standard shapes, to combine shapes, or to define your own. It 
@@ -21,13 +21,87 @@
 
 	For a visual index of grids, see the <a href="http://gamelogic.co.za/grids/quick-start-tutorial/grid-index/">Grid Index</a>.
 
-	@version 1.9
+	@version 1.13
+
+	<h3>Navigating the documentation</h3>
+	Grids is a big library, and it can be hard to find functions. It's a good idea to 
+    read this guide first: [Introduction and Terminology](http://gamelogic.co.za/grids/documentation-contents/quick-start-tutorial/introduction-and-terminology/) 
+	which explains the core concepts. It's important to understand grids, maps, and 
+	grid points.
+
+	When browsing the documentation, a good place to start is to look at the methods 
+	provided by your particular grid and grid point class (for example RectGrid and 
+	RectPoint).
+	
+	Algorithms contain many of the grid algorithms such as path finding, getting 
+	grid points in range, fidinging connected lines, rays and other shapes, and 
+	transforming sets of points.
+	
+	Geometric funtions are usually provided by the point class, unless they rely and
+	the particular mapping, in which case they are provided by the map.
 	
 	<center>
 		<img src="GridIndex.png" />
 	</center>
 
 	<h3>Changes</h3>
+
+	Version 1.13
+		- Removed GridUtils that contains methods for testing purposes.
+		- Added custom maps for all tile grid builders that did not have them.
+		- Added functions that were missing for the Basic license.
+
+	Version 1.12
+		- Fixed a bug with the color list drawer that prevented grid colors from being changed.
+
+	Version 1.11
+		- Fixed a bug in some overloads of PointsInRange and PointsInRangeCost that caused poor performance.
+		- Removed a old AStar2 test method.
+		- Added another constructor for LineGrids that allows neighbor setup.
+
+	Version 1.10.1
+		- Added a constructor to InspectableVectorPoint that takes a diamond point as a parameter.
+		- Fixed a bug with neighbor constants for Diamond grids (which caused Sprial iterators from not working).
+		- Fixed a bug with neighbors of wrapped grids.
+		- Fixed a bug with PointyHexHorizontalRectangleWrapper wrapping calculations.
+		
+	Version 1.10		
+		- Added GetPointsInRange and GetPointsInRangeCosts functions that returns all the points in a grid in a given range, or their distances from the start goal.
+		- Added three new cell types that can be used with Unity's GUI system (with or without grid builders):
+			- UITextCell 
+			- UIImageCell			
+			- UIImageTextCell
+		- Added a GetLine extension methods for maps.
+		- Added a spriral iterator overload for rect and hex grids.
+		- Added a spiral iterator for diamond grids
+		- Added the Perp method to rect, diamond, and hex points.		
+		- Added a class PointStack which is a AOL compiler-safe Stack for points.
+		- Added Fill methods to set the entire grid to a value or the result of a function.
+		- Added CloneStructure methods that clones a grids structure, and use the given value or function to 
+			fill the new grid.
+		- Added an Apply method that calls an action for each cell in the grid.
+		- Added a Transform method that replaces each cell with a transformed cell.
+		- Added a overload to the Scale methods in Imap and AbstractMap that takes a Vector2.
+		- Redesigned the way neighbors work slightly:
+			- Added a property NeighborDirections to grids that can be used to get and set the grids neighbor-setup. 
+			- Added default neighbor sets to point types
+			- Removed InitNeighbors from abstract grid classes
+			- CloneStructure and CastValues now correctly copy over the original grid's neighbor-setup
+		- Changed all grid builders to take a Vector2 for the cell spacing factor, instead of a single factor.
+		- Fixed dimension and anchor calculations for polar pointy brick maps
+		- Fixed the type of the Grid property of polar grid builders.
+		- Fixed a bug that prevented MeshTileCells' colors to be serialized.
+		- Fixed a bug that could cause errors with input if the cell in a grid is null.
+		- Fixed a bug that prevented polar grids from being used with GridBehaviours
+		- Fixed a bug with polar grid maps and mesh creation.
+		- Fixed a bug in the Poisson disk generation code that sometimes caused points to be generated outside the given rectangle
+		- Removed the default OnClick method provided in SpriteCell and MeshTileCell
+		- Made TextureCell obsolete (use UVCell instead)
+		- Renamed the Select method defined on grids to SelectValuesAt
+		- Renamed XXXUtil to XXXUtils for consistency
+		- Made many documentation improvements.
+		- Made compatible with Unity 5.0
+		- Updated extensions package to version 1.1
 
 	Version 1.9
 		- Added custom shapes for all basic, non-polar grids in the editor.
@@ -139,7 +213,6 @@
 /**
 	This namespace contains classes used commonly by sub-namespaces.
 */
-
 namespace Gamelogic
 {
 	/**
@@ -150,20 +223,21 @@ namespace Gamelogic
 		/**
 			Classes used for grids editors.
 		*/
+	// ReSharper disable once EmptyNamespace
 		namespace Editor {}
 	}
 
 	/**
 		Classes used for writing Unity Editor code that is used by all Gamelogic editor namespaces.
 	*/
+	// ReSharper disable once EmptyNamespace
 	namespace Editor {}
 
 	/**
 		Code used for implementation that is not part of the API.
 	*/
+	// ReSharper disable once EmptyNamespace
 	namespace Internal {}
-
-
 }
 
 

@@ -13,6 +13,7 @@ namespace Gamelogic.Grids
 		MiddleRight,
 		BottomLeft,
 		BottomCenter,
-		BottomRight
+		BottomRight,
+		None
 	}
 }

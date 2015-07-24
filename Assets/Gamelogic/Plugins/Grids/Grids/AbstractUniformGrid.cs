@@ -31,7 +31,7 @@ namespace Gamelogic.Grids
 		where TPoint : IGridPoint<TPoint>, IVectorPoint<TPoint>
 	{
 		#region Fields
-		protected IEnumerable<TPoint> neighborDirections;
+		private IEnumerable<TPoint> neighborDirections;
 		protected int width;
 		protected int height;
 
@@ -112,6 +112,12 @@ namespace Gamelogic.Grids
 				return inverseGridPointTransform;
 			}
 		}
+
+		public IEnumerable<TPoint> NeighborDirections 
+		{
+			get { return neighborDirections; }
+			set { neighborDirections = value.ToList(); }
+		}
 		#endregion
 
 		#region Construction
@@ -139,7 +145,8 @@ namespace Gamelogic.Grids
 	*/
 		protected AbstractUniformGrid(int width, int height, Func<TPoint, bool> isInsideTest, 
 			Func<TPoint, TPoint> gridPointTransform,
-			Func<TPoint, TPoint> inverseGridPointTransform)
+			Func<TPoint, TPoint> inverseGridPointTransform, 
+			IEnumerable<TPoint> neighborDirections)
 		{
 #if Trial
 			DLLUtil.CheckTrial();
@@ -155,8 +162,11 @@ namespace Gamelogic.Grids
 			contains = isInsideTest;
 			SetGridPointTransforms(gridPointTransform, inverseGridPointTransform);
 
+			//Copy the neighbors to prevent external and unexpected manipulation 
+			NeighborDirections = neighborDirections;
+
 			//TODO: replace; this is just for now
-			InitNeighbors();
+			//InitNeighbors();
 		}
 
 		/**
@@ -262,24 +272,18 @@ namespace Gamelogic.Grids
 		#region Neighbors
 		public IEnumerable<TPoint> GetAllNeighbors(TPoint point)
 		{
-			return from direction in GetNeighborDirections()
+			return from direction in NeighborDirections
 				   select point.Translate(direction);
-		}
-
-		public IEnumerable<TPoint> GetNeighborDirections()
-		{
-			return neighborDirections;
 		}
 
 		//The only legal cellIndex to pass to this methid is 0
 		public IEnumerable<TPoint> GetNeighborDirections(int cellIndex)
 		{
-			return GetNeighborDirections();
+			return NeighborDirections;
 		}
 		#endregion
 
 		#region Implementation
-		abstract protected void InitNeighbors(); 
 		abstract public IGrid<TNewCell, TPoint> CloneStructure<TNewCell>();
 		abstract protected TPoint PointFromArrayPoint(int aX, int aY);
 		abstract protected ArrayPoint ArrayPointFromPoint(int hX, int hY);

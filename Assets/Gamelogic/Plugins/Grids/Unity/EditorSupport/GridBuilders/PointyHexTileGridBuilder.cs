@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using UnityEngine;
 
 namespace Gamelogic.Grids
@@ -148,7 +149,7 @@ namespace Gamelogic.Grids
 					cellHeight = CellPrefab.Dimensions.x/69*80;
 					cellDimensions = new Vector2(cellWidth, cellHeight);
 
-					windowedHexMap = new PointyHexMap(cellDimensions*CellSpacingFactor)
+					windowedHexMap = new PointyHexMap(cellDimensions.HadamardMul(CellSpacingFactor))
 						.WithWindow(CenterRect);
 					break;
 
@@ -157,7 +158,7 @@ namespace Gamelogic.Grids
 					cellHeight = CellPrefab.Dimensions.y;
 					cellDimensions = new Vector2(cellWidth, cellHeight);
 
-					windowedHexMap = new PointyBrickMap(cellDimensions*CellSpacingFactor)
+					windowedHexMap = new PointyBrickMap(cellDimensions.HadamardMul(CellSpacingFactor))
 						.WithWindow(CenterRect);
 					break;
 

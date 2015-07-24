@@ -4,17 +4,16 @@
 // Copyright (c) 2013 Gamelogic (Pty) Ltd       //
 //----------------------------------------------//
 
+
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Gamelogic.Grids
 {
 	/**
 		A grid for pointy hexagons, that is, hexagons with two vertical edges.
 	
-		
-		
 		@version1_0
 
 		@ingroup Grids
@@ -24,21 +23,6 @@ namespace Gamelogic.Grids
 		AbstractUniformGrid<TCell, PointyHexPoint>,
 		IEvenGrid<TCell, PointyHexPoint, PointyHexPoint>
 	{
-		#region Implementation
-		protected override void InitNeighbors()
-		{
-			neighborDirections = new PointList<PointyHexPoint>
-			{
-				PointyHexPoint.East,
-				PointyHexPoint.NorthEast,
-				PointyHexPoint.NorthWest,
-				PointyHexPoint.West,
-				PointyHexPoint.SouthWest,
-				PointyHexPoint.SouthEast
-			};
-		}
-		#endregion
-
 		#region Storage
 		override protected PointyHexPoint PointFromArrayPoint(int aX, int aY)
 		{
@@ -67,7 +51,7 @@ namespace Gamelogic.Grids
 
 		public IEnumerable<PointyHexPoint> GetPrincipleNeighborDirections()
 		{
-			return neighborDirections.Take(neighborDirections.Count() / 2);
+			return NeighborDirections.TakeHalf();
 		}
 		#endregion
 

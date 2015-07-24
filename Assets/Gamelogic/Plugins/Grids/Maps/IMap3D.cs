@@ -9,9 +9,12 @@ using UnityEngine;
 namespace Gamelogic.Grids
 {
 	/**
-		An IMap maps world coordinates to Grid coordinates and vice versa.
+		An IMap maps 3D world coordinates to Grid coordinates and vice versa. 
+
+		Many grids provide 2D maps, which can be converted to standard 3D maps 
+		using commands such as To3DXY.
 	
-		
+		You can also provide your own maps, either as implementations of IMap, or IMap3D.
 		
 		@version1_0
 

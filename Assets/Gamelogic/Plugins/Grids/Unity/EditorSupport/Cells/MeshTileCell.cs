@@ -19,7 +19,11 @@ namespace Gamelogic.Grids
 	public class MeshTileCell : TileCell
 	{
 		private bool on;
+
+		[SerializeField]
 		private Color color;
+		
+		[SerializeField]
 		private Color highlightColor;
 
 		override public Color Color
@@ -29,7 +33,7 @@ namespace Gamelogic.Grids
 			set
 			{
 				color = value;
-				highlightColor = color * 0.5f + Color.white * 0.5f;
+				highlightColor = Color.Lerp(value, Color.white, 0.5f);
 
 				__UpdatePresentation();
 			}
@@ -66,9 +70,7 @@ namespace Gamelogic.Grids
 			}
 
 			mesh.colors = colors;
-		}
-
-		
+		}		
 
 		public bool HighlightOn
 		{
@@ -80,6 +82,11 @@ namespace Gamelogic.Grids
 
 				__UpdatePresentation();
 			}
+		}
+
+		public void OnClick()
+		{
+			HighlightOn = !HighlightOn;
 		}
 	}
 }

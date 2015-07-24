@@ -13,8 +13,7 @@ namespace Gamelogic.Grids
 
 		@tparam TPoint the type of point of the grid that this builder is building.
 	*/
-	[ExecuteInEditMode]
-	public abstract class TileGridBuilder<TPoint> : GLMonoBehaviour, ITileGrid<TPoint>, 
+	public abstract class TileGridBuilder<TPoint> : GridBuilder<TPoint>, ITileGrid<TPoint>, 
 		IGLScriptableObject
 		where TPoint : IGridPoint<TPoint>
 	{
@@ -25,14 +24,6 @@ namespace Gamelogic.Grids
 		#endregion
 
 		#region Fields
-		[SerializeField]
-		[Tooltip("When to update the grid")]
-		protected UpdateType updateType = UpdateType.EditorManual;
-
-		[SerializeField]
-		[Tooltip("Whether the grid will respond to mouse clicks")]
-		protected bool isInteractive;
-
 		[SerializeField]
 		[Tooltip("The object that will be used to display each cell.")]
 		protected TileCell cellPrefab =
@@ -58,8 +49,8 @@ namespace Gamelogic.Grids
 
 		[SerializeField]
 		[Tooltip("A factor that controls the spacing between cells.")]
-		protected float cellSpacingFactor
-			= 1;
+		protected Vector2 cellSpacingFactor
+			= Vector2.one;
 
 		[SerializeField]
 		[Tooltip("Whether to set cells colors")]
@@ -67,6 +58,7 @@ namespace Gamelogic.Grids
 
 		[SerializeField]
 		[Tooltip("The colors to use to color cells.")]
+		[ContextMenuItem("Reset", "ResetColors")]
 		protected Color[] colors = GridBuilderUtils.DefaultColors;
 
 		[SerializeField]
@@ -74,11 +66,7 @@ namespace Gamelogic.Grids
 		protected ColorFunction colorFunction =
 			new ColorFunction {x0 = 1, x1 = 1, y1 = 1};
 
-
-		protected IGrid<TileCell, TPoint> grid;
-		protected IMap3D<TPoint> map;
-
-		[SerializeField] protected TileCell[] cells;
+		
 
 		#endregion
 
@@ -174,7 +162,7 @@ namespace Gamelogic.Grids
 		/**
 			@usedbyeditor
 		*/
-		public float CellSpacingFactor
+		public Vector2 CellSpacingFactor
 		{
 			get { return cellSpacingFactor; }
 			set { cellSpacingFactor = value; }
@@ -223,15 +211,7 @@ namespace Gamelogic.Grids
 			set { this[point] = (TileCell) value; }
 		}
 		*/
-		public TPoint MousePosition
-		{
-			get
-			{
-				Vector3 worldPosition = GridBuilderUtils.ScreenToWorld(gameObject, Input.mousePosition);
-
-				return map[worldPosition];
-			}
-		}
+		
 
 		#endregion
 
@@ -245,13 +225,6 @@ namespace Gamelogic.Grids
 				if (!__CompilerHints.__CompilerHint__Diamond()) return;
 				if (!__CompilerHints.__CompilerHint__PointyHex()) return;
 				if (!__CompilerHints.__CompilerHint__FlatHex()) return;
-
-				if (!__CompilerHints.__CompilerHint__PointyTri()) return;
-				if (!__CompilerHints.__CompilerHint__FlatTri()) return;
-				if (!__CompilerHints.__CompilerHint__PointyRhomb()) return;
-				if (!__CompilerHints.__CompilerHint__FlatRhomb()) return;
-
-				if (!__CompilerHints.__CompilerHint__Cairo()) return;
 			}
 #endif
 			if (cellPrefab == null)
@@ -275,14 +248,6 @@ namespace Gamelogic.Grids
 
 			InitUserGrid();
 		}
-
-		public void Update()
-		{
-			if (isInteractive)
-			{
-				ProcessInput();
-			}
-		}
 		#endregion
 
 		#region Abstract methods
@@ -294,7 +259,6 @@ namespace Gamelogic.Grids
 		#endregion
 
 		#region Implementation
-
 		private void MakeInnerGrid()
 		{
 			if (cellPrefab == null) return;
@@ -370,8 +334,8 @@ namespace Gamelogic.Grids
 
 				cell.name = point.ToString();
 
-				int spliceCount = point.SpliceCount();
-				int index = point.RenderIndex();
+				int spliceCount = point.SpliceCount;
+				int index = point.SpliceIndex;
 
 				cell.SetAngle(-360f/spliceCount*index);
 
@@ -431,6 +395,9 @@ namespace Gamelogic.Grids
 				case MapAlignment.BottomRight:
 					alignmentFunc = windowedMap => windowedMap.AlignBottomRight(grid);
 					break;
+				case MapAlignment.None:
+					alignmentFunc = windowedMap => windowedMap;
+					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -450,20 +417,6 @@ namespace Gamelogic.Grids
 			}
 		}
 
-		protected WindowedMap<TPoint> GetCustomMap()
-		{
-			var mapBuilder = GetComponent<CustomMapBuilder>();
-
-			if (mapBuilder == null)
-			{
-				Debug.LogError("You must have a CustomMapBuilder component attached to your grid if you want to use a custom grid");
-
-				return null;
-			}
-
-			return mapBuilder.CreateWindowedMap<TPoint>();
-		}
-
 		protected IGrid<TileCell, TPoint> GetCustomGrid()
 		{
 			var shapeBuilder = GetComponent<CustomGridBuilder>();
@@ -473,55 +426,26 @@ namespace Gamelogic.Grids
 				Debug.LogError(
 					"You must attach a MonoBehaviour that inherits from <color=blue><b>CustomGridBuilder</b></color> to use a custom shape.",
 					this);
+
+				return null;
 			}
 
-			if (shapeBuilder == null)
+			var newGrid = shapeBuilder.MakeGrid<TileCell, TPoint>();
+
+			if (newGrid == null)
 			{
 				Debug.LogError(
-					"The custom grid builder returned null instead of a grid. Make sure it supports grids that take points f the correct type.");
+					"The custom grid builder returned null instead of a grid. Make sure it supports grids that take points f the correct type.", this);
 			}
 
-			return shapeBuilder.MakeGrid<TileCell, TPoint>();
+			return newGrid;
 		}
+		#endregion
 
-		private void ProcessInput()
+		#region Inspector
+		private void ResetColors()
 		{
-			if (Input.GetMouseButtonDown(0))
-			{
-				if (grid.Contains(MousePosition))
-				{
-					SendMessageToGridAndCell(MousePosition, "OnLeftClick");
-					SendMessageToGridAndCell(MousePosition, "OnClick");
-				}
-			}
-
-			if (Input.GetMouseButtonDown(1))
-			{
-				if (grid.Contains(MousePosition))
-				{
-					SendMessageToGridAndCell(MousePosition, "OnRightClick");
-					SendMessageToGridAndCell(MousePosition, "OnClick");
-				}
-			}
-
-			if (Input.GetMouseButtonDown(2))
-			{
-				if (grid.Contains(MousePosition))
-				{
-					SendMessageToGridAndCell(MousePosition, "OnMiddleClick");
-					SendMessageToGridAndCell(MousePosition, "OnClick");
-				}
-			}
-		}
-
-		private void SendMessageToGridAndCell(TPoint point, string message)
-		{
-			SendMessage(message, point, SendMessageOptions.DontRequireReceiver);
-
-			if (grid[point] != null)
-			{
-				grid[point].SendMessage(message, SendMessageOptions.DontRequireReceiver);
-			}
+			colors = GridBuilderUtils.DefaultColors;
 		}
 		#endregion
 	}

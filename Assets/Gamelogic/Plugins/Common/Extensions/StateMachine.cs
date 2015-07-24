@@ -22,15 +22,17 @@ namespace Gamelogic
 	{
 		private class State
 		{
-			public readonly Action OnStart;
-			public readonly Action OnUpdate;
-			public readonly Action OnStop;
+			public readonly Action onStart;
+			public readonly Action onUpdate;
+			public readonly Action onStop;
+			public readonly TLabel label;
 
-			public State(Action OnStart, Action OnUpdate, Action OnStop)
+			public State(TLabel label, Action onStart, Action onUpdate, Action onStop)
 			{
-				this.OnStart = OnStart;
-				this.OnUpdate = OnUpdate;
-				this.OnStop = OnStop;
+				this.onStart = onStart;
+				this.onUpdate = onUpdate;
+				this.onStop = onStop;
+				this.label = label;
 			}
 		}
 
@@ -40,11 +42,19 @@ namespace Gamelogic
 		/**
 			Returns the label of the current state.
 		*/
-		public TLabel CurrentState { get; private set; }
+
+		public TLabel CurrentState
+		{
+			get { return currentState.label; }
+
+			/**@version1_2*/
+			set { ChangeState(value); }
+		}
 
 		/**
 			Constructs a new StateMachine.
 		*/
+
 		public StateMachine()
 		{
 			stateDictionary = new Dictionary<TLabel, State>();
@@ -57,27 +67,26 @@ namespace Gamelogic
 
 			Any delegate can be null, and wont be executed.
 		*/
-		public void AddState(TLabel label, Action OnStart, Action OnUpdate, Action OnStop)
+		public void AddState(TLabel label, Action onStart, Action onUpdate, Action onStop)
 		{
-			stateDictionary[label] = new State(OnStart, OnUpdate, OnStop);
+			stateDictionary[label] = new State(label, onStart, onUpdate, onStop);
 		}
 
 		/**
 			Changes the state from the existing one to the state with the given label.
 		*/
-		public void ChangeState(TLabel newState)
+		private void ChangeState(TLabel newState)
 		{
-			if (currentState != null && currentState.OnStop != null)
+			if (currentState != null && currentState.onStop != null)
 			{
-				currentState.OnStop();
+				currentState.onStop();
 			}
 
 			currentState = stateDictionary[newState];
-			CurrentState = newState;
 
-			if (currentState.OnStart != null)
+			if (currentState.onStart != null)
 			{
-				currentState.OnStart();
+				currentState.onStart();
 			}
 		}
 
@@ -86,9 +95,9 @@ namespace Gamelogic
 		*/
 		public void Update()
 		{
-			if (currentState != null && currentState.OnUpdate != null)
+			if (currentState != null && currentState.onUpdate != null)
 			{
-				currentState.OnUpdate();
+				currentState.onUpdate();
 			}
 		}
 	}

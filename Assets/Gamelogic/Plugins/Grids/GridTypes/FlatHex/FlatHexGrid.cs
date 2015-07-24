@@ -5,9 +5,9 @@
 //----------------------------------------------//
 
 
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Gamelogic.Grids
 {
@@ -23,22 +23,6 @@ namespace Gamelogic.Grids
 	[Serializable]
 	public partial class FlatHexGrid<TCell> : AbstractUniformGrid<TCell, FlatHexPoint>, IEvenGrid<TCell, FlatHexPoint, FlatHexPoint>
 	{
-		#region Neighbors
-		protected override void InitNeighbors()
-		{
-			//Default nieghbor setup
-			neighborDirections = new PointList<FlatHexPoint>
-			{
-				FlatHexPoint.NorthEast,
-				FlatHexPoint.North,
-				FlatHexPoint.NorthWest,
-				FlatHexPoint.SouthWest,
-				FlatHexPoint.South,
-				FlatHexPoint.SouthEast
-			};
-		}		
-		#endregion
-
 		#region Storage
 		override protected FlatHexPoint PointFromArrayPoint(int aX, int aY)
 		{
@@ -67,7 +51,7 @@ namespace Gamelogic.Grids
 
 		public IEnumerable<FlatHexPoint> GetPrincipleNeighborDirections()
 		{
-			return neighborDirections.Take(neighborDirections.Count() / 2);
+			return NeighborDirections.TakeHalf();
 		}
 		#endregion
 

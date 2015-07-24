@@ -10,10 +10,14 @@ using UnityEngine;
 namespace Gamelogic.Grids
 {
 	/**
-		An IMap maps world coordinates to Grid coordinates and vice versa.
+		An IMap maps 2D world coordinates to Grid coordinates and vice versa. 
 	
-		Most of the methods of this class are meant to be chained to the constructor.
-		@link_woking_with_maps.
+		Most of the methods of this class are meant to be chained to the constructor. The last command
+		in the chain is suaully a conversion to IMap3D, which converts the 2D coordinates to 3D for use 
+		in the game engine.
+
+		
+	@link_woking_with_maps.
 
 		The order of chained calls sometimes make a difference.
 
@@ -24,14 +28,17 @@ namespace Gamelogic.Grids
 			- do layout (using WithWindow)
 			- convert to 3D
 
-		Note also that the transformations only apply to the world points returned and processed by the map, 
+		Transformations only apply to the world points returned and processed by the map, 
 		the grid contents is not transformed.
 
 		For example, applying scale to the map, will not scale the cells <emph>physically</emph>, in the sense 
 		that if the grid contains GameObjects, cells will remain the same size. The cells will be logically bigger,
 		so they will appear further apart from each other.
 
-		
+		Built-in 2D grids generally have associated built-in maps. See the [Grid Index](http://gamelogic.co.za/grids/quick-start-tutorial/grid-index/) 
+		for the list.
+
+		You can also provide your own maps, either as implementations of IMap, or IMap3D.
 		
 		@version1_0
 
@@ -252,6 +259,8 @@ namespace Gamelogic.Grids
 			Returns an IMap where grid cells are scaled by factor.
 		*/
 		IMap<TPoint> Scale(float factor);
+
+		IMap<TPoint> Scale(Vector2 factor);
 
 		/**
 			Returns an IMap where grid cells are scaled by the factors in each direction.

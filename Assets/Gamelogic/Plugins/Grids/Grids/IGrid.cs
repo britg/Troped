@@ -90,13 +90,23 @@ namespace Gamelogic.Grids
 	/**
 		The base class of all types of grids. 
 	
-		Grids are similar to 2D arrays. Elements in the grid are called _cells_, and are accessed using points.
-	
+		Grids are similar to 2D arrays. Elements in the grid are called _cells_. Grids support random access to cells through 
+		grid points (IGridPoint), using square bracket syntax.
+
 			Cell cell = squareGrid[squarePoint];
+
+		Most grids support enumeration of points, making it possible to use [LINQ](http://msdn.microsoft.com/en-us/library/bb397926.aspx)
+		on grids as well.
+
+			foreach(var point in grid) doSomethingWithCell(grid[point]);
 	
-		General algorithms are provided in Algorithms.
-	
+			var pointsThatSatsifyPointPredicate = grid.Where(pointPredicate);
+
 		
+		General algorithms are provided in Algorithms.
+
+		If you want to implement your own grid, you can implement this interface to have your grid work with 
+		many grid algorithms.
 		
 		@version1_0
 

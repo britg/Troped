@@ -1,5 +1,4 @@
-﻿using System;
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using UnityEditor;
 #endif
 
@@ -20,7 +19,13 @@ namespace Gamelogic.Grids
 		/**
 			A palette of default colors.
 		*/
-		public static Color[] DefaultColors =
+
+		public static Color[] DefaultColors
+		{
+			get { return defaultColors.Clone() as Color[]; }
+		}
+
+		private static readonly Color[] defaultColors = new Color[] 
 		{	
 			ColorFromInt(133, 219, 233),
 			ColorFromInt(198, 224, 34),
@@ -44,6 +49,11 @@ namespace Gamelogic.Grids
 
 			Color.black
 		};
+
+		public static Color Red = DefaultColors[7];
+		public static Color Yellow = DefaultColors[6];
+		public static Color Green = DefaultColors[5];
+		public static Color Blue = DefaultColors[4];
 
 		private static Color ColorFromInt(int r, int g, int b)
 		{

@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using UnityEngine;
 
 namespace Gamelogic.Grids
@@ -29,7 +31,8 @@ namespace Gamelogic.Grids
 		[Serializable]
 		public enum MapType
 		{
-			Brick
+			Brick,
+			Custom
 		}
 
 		#endregion
@@ -47,9 +50,9 @@ namespace Gamelogic.Grids
 
 		#region Properties
 
-		public new FlatHexGrid<MeshTileCell> Grid
+		public new WrappedGrid<TileCell, FlatHexPoint> Grid
 		{
-			get { return (FlatHexGrid<MeshTileCell>) base.Grid; }
+			get { return (WrappedGrid<TileCell, FlatHexPoint>)base.Grid; }
 		}
 
 		public new IMap3D<FlatHexPoint> Map
@@ -74,11 +77,11 @@ namespace Gamelogic.Grids
 			switch (shape)
 			{
 				case Shape.Parallelogram:
-					base.Grid = FlatHexGrid<MeshTileCell>.HorizontallyWrappedParallelogram(width, height);
+					base.Grid = FlatHexGrid<TileCell>.HorizontallyWrappedParallelogram(width, height);
 					break;
 
 				case Shape.Rectangle:
-					base.Grid = FlatHexGrid<MeshTileCell>.HorizontallyWrappedRectangle(width, height);
+					base.Grid = FlatHexGrid<TileCell>.HorizontallyWrappedRectangle(width, height);
 					break;
 
 				default:
@@ -93,6 +96,7 @@ namespace Gamelogic.Grids
 				case MapType.Brick:
 					return new PolarFlatBrickMap(Vector2.zero, polarGridProperties.innerRadius, polarGridProperties.outerRadius,
 				Dimensions);
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

@@ -15,12 +15,23 @@ namespace Gamelogic.Grids
 	*/
 	public class UVCell : TileCell
 	{
+		[SerializeField]
 		public MapPlane plane = MapPlane.XY;
 
+		[SerializeField]
 		private Color color;
+
+		[SerializeField]
 		private Texture2D texture;
+
+		[SerializeField]
 		private Vector2 textureScale;
+
+		[SerializeField]
 		private Vector2 textureOffset;
+
+		[SerializeField]
+		[HideInInspector]
 		private Material material;
 
 		public override Color Color
@@ -32,6 +43,11 @@ namespace Gamelogic.Grids
 				color = value;
 				__UpdatePresentation(true);
 			}
+		}
+
+		public Material Material
+		{
+			get { return material; }
 		}
 
 		public override Vector2 Dimensions
@@ -66,7 +82,7 @@ namespace Gamelogic.Grids
 		{
 			if (material == null)
 			{
-				material = renderer.material; //only duplicate once
+				material = new Material(GetComponent<Renderer>().sharedMaterial); //only duplicate once
 			}
 
 			material.color = color;
@@ -74,7 +90,7 @@ namespace Gamelogic.Grids
 			material.mainTextureOffset = textureOffset;
 			material.mainTextureScale = textureScale;
 
-			renderer.material = material;
+			GetComponent<Renderer>().material = material;
 		}
 
 		public override void SetAngle(float angle)
@@ -85,6 +101,11 @@ namespace Gamelogic.Grids
 		public override void AddAngle(float angle)
 		{
 			transform.RotateAroundZ(angle);
+		}
+
+		public void OnDestroy()
+		{
+			DestroyImmediate(material);
 		}
 	}
 }

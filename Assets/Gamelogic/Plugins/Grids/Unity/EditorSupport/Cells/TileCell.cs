@@ -4,6 +4,9 @@
 // Copyright (c) Gamelogic (Pty) Ltd            //
 //----------------------------------------------//
 
+using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 
 namespace Gamelogic.Grids
@@ -33,7 +36,7 @@ namespace Gamelogic.Grids
 		*/
 		public Vector3 Center
 		{
-			get { return transform.TransformPoint(__CenterOffset); }
+			get {return transform.TransformPoint(__CenterOffset); }
 		}
 
 		/**
@@ -87,17 +90,31 @@ namespace Gamelogic.Grids
 		#region Gizmos
 
 		/**
-		Draws the Gizmos for this tile: a label with the tile name.
+			Draws the Gizmos for this tile: a label with the tile name.
 
-		It is often convenient, for this reason, to make the tile name
-		the coordinate of the tile.
-	*/
-
+			It is often convenient, for this reason, to make the tile name
+			the coordinate of the tile.
+		*/
 		virtual public void OnDrawGizmos()
 		{
 			GLGizmos.Label(Center, name);
 		}
 
 		#endregion
+
+public static bool __CompilerHint__Rect()
+{
+	//Ensures abstract super classes for base grids gets created
+	var grid = new RectGrid<TileCell>(1, 1, p => p == RectPoint.Zero, x => x, x => x, new List<RectPoint>());
+
+	//Ensures shape infpo classes get created
+	var shapeStorageInfo = new ShapeStorageInfo<RectPoint>(new IntRect(), p => true);
+	var shapeInfo = new RectShapeInfo<TileCell>(shapeStorageInfo);
+
+	return grid[grid.First()] == null || shapeInfo.Translate(RectPoint.Zero) != null;
+}
+
 	}
+
+
 }

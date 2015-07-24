@@ -640,6 +640,32 @@ namespace Gamelogic
 		{
 			transform.Sort(t => t.name);
 		}
+
+		/**
+			A lazy enumerable of this objects transform, and all it's children down the hierarchy.
+			
+			@version_e_1_1
+		*/
+		public static IEnumerable<Transform> SelfAndAllChildren(this Transform transform)
+		{
+			var openList = new Queue<Transform>();
+
+			openList.Enqueue(transform);
+
+			while (openList.Any())
+			{
+				var currentChild = openList.Dequeue();
+
+				yield return currentChild;
+
+				var children = transform.GetChildren();
+
+				foreach (var child in children)
+				{
+					openList.Enqueue(child);
+				}
+			}
+		}
 		#endregion
 	}	
 }

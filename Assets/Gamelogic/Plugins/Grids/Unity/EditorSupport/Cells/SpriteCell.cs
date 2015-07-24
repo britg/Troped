@@ -16,7 +16,6 @@ namespace Gamelogic.Grids
 	@version1_8
 	@ingroup UnityComponents
 */
-
 	[AddComponentMenu("Gamelogic/Cells/SpriteCell")]
 	public class SpriteCell : TileCell, IGLScriptableObject
 	{
@@ -24,8 +23,7 @@ namespace Gamelogic.Grids
 
 		[Tooltip("The possible frames that this sprite supports.")]
 		[SerializeField]
-		private Sprite[] sprites =
-			new Sprite[0];
+		private Sprite[] sprites = new Sprite[0];
 
 		[SerializeField] private int frameIndex;
 
@@ -96,7 +94,7 @@ namespace Gamelogic.Grids
 
 		public override void __UpdatePresentation(bool forceUpdate)
 		{
-			//for now, always update
+			//for now, always update, regardless of forceUpdate value
 			if (frameIndex < sprites.Length)
 			{
 				SpriteRenderer.sprite = sprites[frameIndex];
@@ -113,12 +111,6 @@ namespace Gamelogic.Grids
 		public override void AddAngle(float angle)
 		{
 			SpriteRenderer.transform.RotateAroundZ(angle);
-		}
-
-		public void OnClick()
-		{
-			highlightOn = !highlightOn;
-			__UpdatePresentation(true);
 		}
 	}
 }

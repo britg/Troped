@@ -119,10 +119,92 @@ namespace Gamelogic
 		/**
 			Finds the maximum element in the source as scored by the given function.
 		*/
-		public static T MinBy<T>(this IEnumerable<T> source, Func<T, IComparable> score)
+		//public static T MinBy<T>(this IEnumerable<T> source, Func<T, IComparable> score)
+		//{
+		//	return source.Aggregate((x, y) => score(x).CompareTo(score(y)) < 0 ? x : y);
+		//}
+
+		public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+	Func<TSource, TKey> selector)
 		{
-			return source.Aggregate((x, y) => score(x).CompareTo(score(y)) < 0 ? x : y);
+			return source.MinBy(selector, Comparer<TKey>.Default);
 		}
+
+		public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+			Func<TSource, TKey> selector, IComparer<TKey> comparer)
+		{
+			source.ThrowIfNull("source");
+			selector.ThrowIfNull("selector");
+			comparer.ThrowIfNull("comparer");
+			
+			using (IEnumerator<TSource> sourceIterator = source.GetEnumerator())
+			{
+				if (!sourceIterator.MoveNext())
+				{
+					throw new InvalidOperationException("Sequence was empty");
+				}
+
+				TSource min = sourceIterator.Current;
+				TKey minKey = selector(min);
+				
+				while (sourceIterator.MoveNext())
+				{
+					TSource candidate = sourceIterator.Current;
+					TKey candidateProjected = selector(candidate);
+					if (comparer.Compare(candidateProjected, minKey) < 0)
+					{
+						min = candidate;
+						minKey = candidateProjected;
+					}
+				}
+				return min;
+			}
+		}
+
+		public static TSource MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+	Func<TSource, TKey> selector)
+		{
+			return source.MaxBy(selector, Comparer<TKey>.Default);
+		}
+
+		public static TSource MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+			Func<TSource, TKey> selector, IComparer<TKey> comparer)
+		{
+			source.ThrowIfNull("source");
+			selector.ThrowIfNull("selector");
+			comparer.ThrowIfNull("comparer");
+
+			using (IEnumerator<TSource> sourceIterator = source.GetEnumerator())
+			{
+				if (!sourceIterator.MoveNext())
+				{
+					throw new InvalidOperationException("Sequence was empty");
+				}
+
+				TSource max = sourceIterator.Current;
+				TKey maxKey = selector(max);
+
+				while (sourceIterator.MoveNext())
+				{
+					TSource candidate = sourceIterator.Current;
+					TKey candidateProjected = selector(candidate);
+					
+					if (comparer.Compare(candidateProjected, maxKey) > 0)
+					{
+						max = candidate;
+						maxKey = candidateProjected;
+					}
+				}
+
+				return max;
+			}
+		}
+
+		private static void ThrowIfNull(this object o, string message)
+		{
+			if(o == null) throw new NullReferenceException(message);
+		}
+
 
 		/**
 			Returns a enumerable with elements in order, but the first element is moved to the end.
@@ -209,12 +291,19 @@ namespace Gamelogic
 		    
 			while (n > 1) 
 			{  
-		        n--;
-				var k = Random.Range(0, n + 1);  
+		        n--;  
+		        var k = Random.Range(0, n + 1);  
 		        var value = source[k];  
 		        source[k] = source[n];  
 		        source[n] = value;  
 		    }  
+		}
+
+		public static IEnumerable<T> TakeHalf<T>(this IEnumerable<T> source)
+		{
+			int count = source.Count();
+
+			return source.Take(count/2);
 		}
 	}
 }

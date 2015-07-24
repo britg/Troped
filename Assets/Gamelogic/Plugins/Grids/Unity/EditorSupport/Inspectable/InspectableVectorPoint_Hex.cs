@@ -4,6 +4,8 @@
 // Copyright (c) 2013 Gamelogic (Pty) Ltd       //
 //----------------------------------------------//
 
+
+
 namespace Gamelogic.Grids
 {
 	/**
@@ -49,7 +51,6 @@ namespace Gamelogic.Grids
 			return new PointyHexPoint(x, y);
 		}
 	
-#if !EXPERIMENTAL
 		/**
 			@version1_8
 		*/
@@ -63,6 +64,5 @@ namespace Gamelogic.Grids
 		{
 			return new FlatHexPoint(x, y);
 		}
-#endif
 	}
 }

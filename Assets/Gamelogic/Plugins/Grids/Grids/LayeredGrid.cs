@@ -34,6 +34,22 @@ namespace Gamelogic.Grids
 			get { return layer; }
 		}
 
+		public int SpliceIndex
+		{
+			get
+			{
+				return point.SpliceIndex;
+			}
+		}
+
+		public int SpliceCount
+		{
+			get
+			{
+				return point.SpliceCount;
+			}
+		}
+
 		public LayeredPoint(TPoint point, int layer)
 		{
 			this.point = point;
@@ -59,6 +75,12 @@ namespace Gamelogic.Grids
 	/**
 		A layered grid is a 3D grid made out of layers of 2D grids with the same point type. Each layer can have a different 
 		shape.
+
+		Layered grids are accessed through LayeredPoints.
+
+		Note that neighbors are not implemented for this grid. If you need to use neighbor relationships, you need
+		to extend this class and configure neighbors. See [
+A new look at layered grids: setting up neighbors](http://gamelogic.co.za/2014/05/24/a-new-look-at-layered-grids-setting-up-neighbors/).
 
 		@version1_8
 		@ingroup Grids
@@ -266,6 +288,10 @@ namespace Gamelogic.Grids
 			this.baseMap = baseMap;
 		}
 
+		/**
+			This method is not implemented. Unlike most grids, this is not a 2D grid embedded in 3D,
+			so projecting it to 2D does not make sense.
+		*/
 		public IMap<LayeredPoint<TPoint>> To2D()
 		{
 			throw new NotImplementedException();
@@ -288,9 +314,9 @@ namespace Gamelogic.Grids
 			{
 				int layerIndex = Mathf.RoundToInt((point.y - layerOffset)/layerDistance);
 
-				var point2d = baseMap[new Vector2(point.x, point.z)];
+				var point2D = baseMap[new Vector2(point.x, point.z)];
 
-				return new LayeredPoint<TPoint>(point2d, layerIndex);
+				return new LayeredPoint<TPoint>(point2D, layerIndex);
 			}
 		}
 	}

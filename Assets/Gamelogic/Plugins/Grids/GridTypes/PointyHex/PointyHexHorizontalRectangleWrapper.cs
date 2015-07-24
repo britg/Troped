@@ -4,6 +4,8 @@
 // Copyright (c) 2013 Gamelogic (Pty) Ltd       //
 //----------------------------------------------//
 
+
+
 namespace Gamelogic.Grids
 {
 	/**
@@ -24,7 +26,7 @@ namespace Gamelogic.Grids
 
 		public PointyHexPoint Wrap(PointyHexPoint point)
 		{
-			return new PointyHexPoint(Mathi.Mod(point.X, width) - Mathi.Div(point.Y, 2), point.Y);
+			return new PointyHexPoint(Mathi.Mod(point.X + Mathi.Div(point.Y, 2), width) - Mathi.Div(point.Y, 2), point.Y);
 		}
 	}
 }

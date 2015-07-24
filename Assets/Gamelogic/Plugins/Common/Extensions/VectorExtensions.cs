@@ -133,5 +133,15 @@ namespace Gamelogic
 		{
 			return vector - vector.Proj(baseVector);
 		}
+
+		public static Vector3 PerpXZ(this Vector3 v)
+		{
+			return new Vector3(-v.z, v.y, v.x);
+		}
+
+		public static Vector3 PerpXY(this Vector3 v)
+		{
+			return new Vector3(-v.y, v.x, v.z);
+		}
 	}
 }

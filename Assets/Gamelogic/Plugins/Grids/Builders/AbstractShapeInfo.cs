@@ -40,6 +40,11 @@ namespace Gamelogic.Grids
 		#endregion
 
 		#region Interface
+		public TShapeOp If(bool condition)
+		{
+			return MakeOp(shapeStorageStorageInfo, (x, y) => condition ? x : y);
+		}
+
 		public TShapeOp Intersection()
 		{
 			return MakeOp(shapeStorageStorageInfo, (x, y) => x.Intersection(y));
@@ -69,6 +74,11 @@ namespace Gamelogic.Grids
 		public TShapeInfo Translate(int x, int y)
 		{
 			return Translate(MakePoint(x, y));
+		}
+
+		public TShapeInfo IfTranslate(bool condition, int x, int y)
+		{
+			return condition ? Translate(MakePoint(x, y)) : MakeShapeInfo(shapeStorageStorageInfo);
 		}
 		
 		//Assumption:

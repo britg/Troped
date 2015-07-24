@@ -13,8 +13,6 @@ namespace Gamelogic.Grids
 
 		This class is used by shape info classes.
 	
-		
-		
 		@version1_0
 
 		@ingroup Scaffolding
@@ -66,7 +64,7 @@ namespace Gamelogic.Grids
 
 		public ShapeStorageInfo<TPoint> SymmetricDifference(ShapeStorageInfo<TPoint> other)
 		{
-			return Union(other).Difference(Intersection(other));
+			return Union(other);
 		}
 		#endregion
 	}

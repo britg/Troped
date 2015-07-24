@@ -111,7 +111,7 @@ namespace Gamelogic.Grids
 			return cellDimensions;
 		}
 
-		public Vector2 CalcGridDimensions(IGridSpace<TPoint> grid)
+		virtual public Vector2 CalcGridDimensions(IGridSpace<TPoint> grid)
 		{
 			if (!grid.Any()) return Vector2.zero;
 
@@ -171,7 +171,7 @@ namespace Gamelogic.Grids
 			return new Vector2(minX, minY);
 		}
 
-		public Vector2 CalcBottomLeft(IGridSpace<TPoint> grid)
+		virtual public Vector2 CalcBottomLeft(IGridSpace<TPoint> grid)
 		{
 			if (!grid.Any()) return Vector2.zero;
 
@@ -305,6 +305,13 @@ namespace Gamelogic.Grids
 		{
 			return new CompoundMap<TPoint>(
 				this, v => new Vector2(v.x * factorX, v.y * factorY), v => new Vector2(v.x / factorX, v.y / factorY));
+		}
+
+		//TODO: Should this alter cell dimensions?
+		public IMap<TPoint> Scale(Vector2 factor)
+		{
+			return new CompoundMap<TPoint>(
+				this, v => new Vector2(v.x * factor.x, v.y * factor.y), v => new Vector2(v.x / factor.x, v.y / factor.y));
 		}
 
 		public IMap<TPoint> SetGridPointTransforms(

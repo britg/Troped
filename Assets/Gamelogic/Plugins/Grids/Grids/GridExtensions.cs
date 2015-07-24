@@ -14,9 +14,7 @@ namespace Gamelogic.Grids
 		Defines extension methods for the IGrid interface. 
 	
 		This is implemented as an extension so that implementers need not
-		extend from a common base class, but provide it to their clients.
-
-		
+		extend from a common base class, but provide it to their clients.		
 		
 		@version1_0
 
@@ -178,7 +176,7 @@ namespace Gamelogic.Grids
 		/**
 			Returns a list of cells that correspond to the list of points.
 		*/
-		public static IEnumerable<TCell> Select<TCell, TPoint>(
+		public static IEnumerable<TCell> SelectValuesAt<TCell, TPoint>(
 			this IGrid<TCell, TPoint> grid,
 			IEnumerable<TPoint> pointList)
 
@@ -249,6 +247,146 @@ namespace Gamelogic.Grids
 			where TPoint : IGridPoint<TPoint>
 		{
 			grid[point] = value;
+		}
+
+		/**
+			Returns the points in a grid neighborhood around the given center.
+			
+			@version1_8
+		*/
+		public static IEnumerable<RectPoint> GetNeighborHood<T>(this RectGrid<T> grid, RectPoint center, int radius)
+		{
+			for (int i = center.X - radius; i <= center.X + radius; i++)
+			{
+				for (int j = center.Y - radius; j <= center.Y + radius; j++)
+				{
+					var neighborhoodPoint = new RectPoint(i, j);
+
+					if (grid.Contains(neighborhoodPoint))
+					{
+						yield return neighborhoodPoint;
+					}
+				}
+			}
+		}
+
+		/**
+			Fills all cells of a grid with the given value.
+
+			@version1_10
+		*/
+		public static void Fill<TCell, TPoint>(this IGrid<TCell, TPoint> grid, TCell value)
+			where TPoint : IGridPoint<TPoint>
+		{
+			foreach (var point in grid)
+			{
+				grid[point] = value;
+			}
+		}
+
+		/**
+			Fills all cells of a grid with the value returned by createValue.
+
+			@version1_10
+		*/
+		public static void Fill<TCell, TPoint>(this IGrid<TCell, TPoint> grid, Func<TCell> createValue)
+			where TPoint : IGridPoint<TPoint>
+		{
+			foreach (var point in grid)
+			{
+				grid[point] = createValue();
+			}
+		}
+
+		/**
+			Fills the cell of each point of a grid with the value returned by createValue when passed the point as a parameter.
+
+			@version1_10
+		*/
+		public static void Fill<TCell, TPoint>(this IGrid<TCell, TPoint> grid, Func<TPoint, TCell> createValue)
+			where TPoint : IGridPoint<TPoint>
+		{
+			foreach (var point in grid)
+			{
+				grid[point] = createValue(point);
+			}
+		}
+
+		/**
+			Clones the given grid, and fills all cells of the cloned grid with the given value.
+
+			@version1_10
+		*/
+		public static IGrid<TNewCell, TPoint> CloneStructure<TNewCell,  TPoint>(this IGrid<TPoint> grid, TNewCell value)
+			where TPoint : IGridPoint<TPoint>
+		{
+			var newGrid = grid.CloneStructure<TNewCell>();
+			newGrid.Fill(value);
+
+			return newGrid;
+		}
+
+		/**
+			Clones the given grid, and fills all cells of the cloned grid 
+			with the value returned by createValue.
+
+			@version1_10
+		*/
+		public static IGrid<TNewCell, TPoint> CloneStructure<TNewCell, TPoint>(this IGrid<TPoint> grid, Func<TNewCell> createValue)
+			where TPoint : IGridPoint<TPoint>
+		{
+			var newGrid = grid.CloneStructure<TNewCell>();
+			newGrid.Fill(createValue);
+
+			return newGrid;
+		}
+
+		/**
+			Clones the given grid, and fills the cell at each point of the cloned grid with the value 
+			returned by createValue when the point is passed as a parameter.
+
+			@version1_10
+		*/
+		public static IGrid<TNewCell, TPoint> CloneStructure<TNewCell, TPoint>(this IGrid<TPoint> grid, Func<TPoint, TNewCell> createValue)
+			where TPoint : IGridPoint<TPoint>
+		{
+			var newGrid = grid.CloneStructure<TNewCell>();
+			newGrid.Fill(createValue);
+
+			return newGrid;
+		}
+
+		/**
+			Applies the given action to all cells in the grid.
+
+			Example:
+				grid.Apply(cell => cell.Color = Color.red);
+
+			@version1_10
+		*/
+		public static void Apply<TCell, TPoint>(this IGrid<TCell, TPoint> grid, Action<TCell> action)
+			where TPoint : IGridPoint<TPoint>
+		{
+			foreach (var cell in grid.Values)
+			{
+				action(cell);
+			}
+		}
+
+		/**
+			Transforms all values in this grid using the given transformation.
+			
+			Example:
+				gridOfNumbers.TraformValues(x => x + 1);
+			@version1_10
+		*/
+		public static void TransformValues<TCell, TPoint>(this IGrid<TCell, TPoint> grid, Func<TCell, TCell> transformation)
+			where TPoint : IGridPoint<TPoint>
+		{
+			foreach (var point in grid)
+			{
+				grid[point] = transformation(grid[point]);
+			}
 		}
 	}
 }

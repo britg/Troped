@@ -47,37 +47,36 @@ namespace Gamelogic.Grids
 			this.offset = offset;
 		}
 
-		public IntRect Translate(ArrayPoint newOffset)
+		public IntRect Translate(ArrayPoint point)
 		{
-			return new IntRect(offset + newOffset, dimensions);
+			return new IntRect(offset + point, dimensions);
 		}
 
-		public IntRect Subtract(ArrayPoint newOffset)
+		public IntRect Subtract(ArrayPoint point)
 		{
-			return new IntRect(offset - newOffset, dimensions);
+			return new IntRect(offset - point, dimensions);
 		}
 
-		public IntRect Intersection(IntRect r2)
+		public IntRect Intersection(IntRect otherRect)
 		{
-			var left = ArrayPoint.Max(offset, r2.offset);
-			var right = ArrayPoint.Min(RightEnd, r2.RightEnd);
-
-			return new IntRect(left, right - left).IncDimensions(new ArrayPoint(15, 15));
-		}
-
-		public IntRect Union(IntRect r2)
-		{
-			var left = ArrayPoint.Min(offset, r2.offset);
-			var right = ArrayPoint.Max(RightEnd, r2.RightEnd);
+			var left = ArrayPoint.Max(offset, otherRect.offset);
+			var right = ArrayPoint.Min(RightEnd, otherRect.RightEnd);
 
 			return new IntRect(left, right - left);
 		}
 
-		public IntRect Difference(IntRect r2)
+		public IntRect Union(IntRect otherRect)
+		{
+			var left = ArrayPoint.Min(offset, otherRect.offset);
+			var right = ArrayPoint.Max(RightEnd, otherRect.RightEnd);
+
+			return new IntRect(left, right - left);
+		}
+
+		public IntRect Difference(IntRect otherRect)
 		{
 			// Not tight
 			return this;
-			// return Subtract(r2.newOffset).Difference(r2.dimensions);
 		}
 
 		public IntRect IncDimensions(ArrayPoint increase)

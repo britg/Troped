@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace Gamelogic.Editor
 {
+	/**
+		@version1_2
+	*/
 	public static class GLEditorGUI
 	{
 		public static readonly GUIStyle SplitterStyle;

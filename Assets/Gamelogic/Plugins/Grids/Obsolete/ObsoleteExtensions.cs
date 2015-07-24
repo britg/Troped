@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Gamelogic.Grids
 {
@@ -70,6 +71,16 @@ namespace Gamelogic.Grids
 			where TPoint : IGridPoint<TPoint>
 		{
 			return map.AlignMiddleCenter(grid);
+		}
+	}
+
+	public static class AbstractUniformGridObsoleteExtensions
+	{
+		[Obsolete("Use the property NeighborDirections instead")]
+		public static IEnumerable<TPoint> GetNeighborDirections<TCell, TPoint>(this AbstractUniformGrid<TCell, TPoint> grid)
+			where TPoint : IGridPoint<TPoint>, IVectorPoint<TPoint>
+		{
+			return grid.NeighborDirections;
 		}
 	}
 }

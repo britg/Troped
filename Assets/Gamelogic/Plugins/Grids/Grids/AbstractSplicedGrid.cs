@@ -21,9 +21,7 @@ namespace Gamelogic.Grids
 	
 		This class implements the common features of tri and rhomb grids. 
 		It is the most probable class to use to define your own grid.
-
-		
-		
+	
 		@version1_0
 
 		@ingroup Scaffolding
@@ -37,7 +35,7 @@ namespace Gamelogic.Grids
 		#region Fields
 		protected int width;
 		protected int height;
-		protected /*readonly*/ IEnumerable<TPoint>[] neighborDirections;
+		protected IEnumerable<TPoint>[] neighborDirections;
 		
 		[NonSerialized]
 		protected Func<TPoint, bool> contains;
@@ -97,23 +95,43 @@ namespace Gamelogic.Grids
 		{
 			get;
 		}
+
+		public IEnumerable<TPoint>[] NeighborDirections
+		{
+			get { return neighborDirections; }
+			set
+			{
+				neighborDirections = new IEnumerable<TPoint>[value.Length];
+
+				for (int i = 0; i < value.Length; i++)
+				{
+					neighborDirections[i] = value[i].ToList();
+				}
+			}
+		}
 		#endregion
 
 		#region Abstract interface
-		abstract protected void InitNeighbors();
 		abstract protected IGrid<TCell[], TBasePoint> MakeUnderlyingGrid(int width, int height);
 		abstract protected TPoint MakePoint(TBasePoint basePoint, int index);
 		#endregion
 
 		#region Constructors
-		protected AbstractSplicedGrid(int width, int height, int cellDivisionCount, Func<TPoint, bool> isInsideTest, Func<TPoint, TPoint> gridPointTransform, Func<TPoint, TPoint> inverseGridPointTransform)
+		protected AbstractSplicedGrid(
+			int width, 
+			int height, 
+			int cellDivisionCount, 
+			Func<TPoint, bool> isInsideTest, 
+			Func<TPoint, TPoint> gridPointTransform, 
+			Func<TPoint, TPoint> inverseGridPointTransform,
+			IEnumerable<TPoint>[] neighborDirections)
 		{
 
 #if Trial
 			DLLUtil.CheckTrial();
 #endif
 			InitFields(width, height, cellDivisionCount);
-			InitNeighbors();
+			NeighborDirections = neighborDirections;
 
 			contains = isInsideTest;
 			SetGridPointTransforms(gridPointTransform, inverseGridPointTransform);

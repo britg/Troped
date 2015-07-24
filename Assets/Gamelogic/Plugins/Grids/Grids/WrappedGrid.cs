@@ -12,6 +12,14 @@ namespace Gamelogic.Grids
 	/**
 		A general implementation of Wrapped grids, that use arbitrary 
 		internal grids and point wrappers.
+
+		A "true point" of a wrapped grid is a point that stays the same after the wrapping.
+
+		- Contains returns true only for true points.
+		- GetAllNeighbors return true points (that is,the neighbors are already wrapped)
+		- the index operator takes all points, and wrap them before access
+		- Iterators iterate over true points
+
 		
 		@version1_7
 	*/
@@ -25,6 +33,12 @@ namespace Gamelogic.Grids
 		{
 			this.grid = grid;
 			this.wrapper = wrapper;
+		}
+
+
+		public TPoint Wrap(TPoint point)
+		{
+			return wrapper.Wrap(point);
 		}
 
 		/**
@@ -73,12 +87,12 @@ namespace Gamelogic.Grids
 		*/
 		public IEnumerable<TPoint> GetAllNeighbors(TPoint point)
 		{
-			return grid.GetAllNeighbors(point).Select(p => wrapper.Wrap(p));
+			return grid.GetAllNeighbors(wrapper.Wrap(point)).Select(p => wrapper.Wrap(p));
 		}
 
 		public IEnumerable<TCell> Values
 		{
-			get { return grid.Values; }
+			get { return this.Select(p => this[p]); }
 		}
 
 		IEnumerable IGrid<TPoint>.Values

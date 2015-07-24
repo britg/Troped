@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+
+
 namespace Gamelogic.Grids
 {
 	/**
@@ -41,7 +43,8 @@ namespace Gamelogic.Grids
 		public enum MapType
 		{
 			Hex,
-			Brick
+			Brick,
+			Custom
 		}
 
 		#endregion
@@ -134,10 +137,10 @@ namespace Gamelogic.Grids
 			{
 				case MapType.Hex:
 					cellWidth = CellPrefab.Dimensions.x;
-					cellHeight = CellPrefab.Dimensions.x/80*69;
+					cellHeight = CellPrefab.Dimensions.y;
 					cellDimensions = new Vector2(cellWidth, cellHeight);
 
-					windowedHexMap = new FlatHexMap(cellDimensions*CellSpacingFactor)
+					windowedHexMap = new FlatHexMap(cellDimensions.HadamardMul(CellSpacingFactor))
 						.WithWindow(CenterRect);
 					break;
 				case MapType.Brick:
@@ -146,8 +149,11 @@ namespace Gamelogic.Grids
 					cellHeight = CellPrefab.Dimensions.y;
 					cellDimensions = new Vector2(cellWidth, cellHeight);
 
-					windowedHexMap = new FlatBrickMap(cellDimensions*CellSpacingFactor)
+					windowedHexMap = new FlatBrickMap(cellDimensions.HadamardMul(CellSpacingFactor))
 						.WithWindow(CenterRect);
+					break;
+				case MapType.Custom:
+					windowedHexMap = GetComponent<CustomMapBuilder>().CreateWindowedMap<FlatHexPoint>();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();

@@ -9,8 +9,6 @@ namespace Gamelogic.Grids
 	/**
 		Contains methods for integer arithmetic that works consistently 
 		for both positive and negative integers.
-
-		
 		
 		@version1_0
 
@@ -68,7 +66,23 @@ namespace Gamelogic.Grids
 
 		public static float Frac(float x)
 		{
-			return x - FloorToInt(x);
+			return x - FloorToInt(x); 
+		}
+
+		public static int Sine(float p)
+		{
+			if (p > 0) return 1;
+			if (p < 0) return -1;
+
+			return 0;
+		}
+
+		public static int Sine(int p)
+		{
+			if (p > 0) return 1;
+			if (p < 0) return -1;
+
+			return 0;
 		}
 	}
 }

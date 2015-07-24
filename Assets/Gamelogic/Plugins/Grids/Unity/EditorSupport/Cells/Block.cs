@@ -52,11 +52,11 @@ namespace Gamelogic.Grids
 		{
 			if (materialCopy == null)
 			{
-				materialCopy = new Material(renderer.sharedMaterial);
+				materialCopy = new Material(GetComponent<Renderer>().sharedMaterial);
 			}
 
 			materialCopy.color = color;
-			renderer.material = materialCopy;
+			GetComponent<Renderer>().material = materialCopy;
 		}
 
 		public override void SetAngle(float angle)

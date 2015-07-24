@@ -11,7 +11,7 @@ namespace Gamelogic.Grids
 
 		@ingroup UnityEditorSupport
 	*/
-	public abstract class PolarTileGridBuilder<TPoint> : GLMonoBehaviour, ITileGrid<TPoint>, IGLScriptableObject
+	public abstract class PolarTileGridBuilder<TPoint> : GridBuilder<TPoint>, ITileGrid<TPoint>, IGLScriptableObject
 		where TPoint : IGridPoint<TPoint>
 	{
 		#region Constants
@@ -20,19 +20,11 @@ namespace Gamelogic.Grids
 
 		#region Fields
 		[SerializeField]
-		[Tooltip("When to update the grid")]
-		protected UpdateType updateType;
-
-		[SerializeField]
-		[Tooltip("Whether the grid will respond to mouse clicks")]
-		protected bool isInteractive;
-
-		[SerializeField]
 		[Tooltip("The object that will be used to display each cell.")]
 		protected MeshTileCell cellPrefab
 			= null;
 
-		//[SerializeField]
+		[SerializeField]
 		public PolarGridProperties polarGridProperties;
 
 		[SerializeField]
@@ -62,38 +54,19 @@ namespace Gamelogic.Grids
 		[Tooltip("Whether to set cells DefaultColors")]
 		protected bool useColor;
 
-		[SerializeField]
-		[Tooltip("The DefaultColors to use to color cells.")]
-		protected Color[] colors = GridBuilderUtils.DefaultColors;
+		[SerializeField] [Tooltip("The DefaultColors to use to color cells.")] protected Color[] colors 
+			= GridBuilderUtils.DefaultColors; 
 
 		[SerializeField]
 		[Tooltip("The color function to use to color cells.")]
 		protected ColorFunction colorFunction =
 			new ColorFunction {x0 = 1, x1 = 1, y1 = 1};
 
-
-		protected IGrid<MeshTileCell, TPoint> grid;
 		protected IPolarMap<TPoint> polarMap;
-		protected IMap3D<TPoint> map;
-
-		[SerializeField] protected MeshTileCell[] cells;
 		#endregion
 
 		#region Properties
-		public TPoint MousePosition
-		{
-			get
-			{
-				Vector3 worldPosition = GridBuilderUtils.ScreenToWorld(gameObject, Input.mousePosition);
-
-				return map[worldPosition];
-			}
-		}
-
-		/**
-			
-		*/
-		public IGrid<MeshTileCell, TPoint> Grid
+		public IGrid<TileCell, TPoint> Grid
 		{
 			get
 			{
@@ -224,13 +197,6 @@ namespace Gamelogic.Grids
 				if (!__CompilerHints.__CompilerHint__Diamond()) return;
 				if (!__CompilerHints.__CompilerHint__PointyHex()) return;
 				if (!__CompilerHints.__CompilerHint__FlatHex()) return;
-
-				if (!__CompilerHints.__CompilerHint__PointyTri()) return;
-				if (!__CompilerHints.__CompilerHint__FlatTri()) return;
-				if (!__CompilerHints.__CompilerHint__PointyRhomb()) return;
-				if (!__CompilerHints.__CompilerHint__FlatRhomb()) return;
-
-				if (!__CompilerHints.__CompilerHint__Cairo()) return;
 			}
 #endif
 			if (cellPrefab == null)
@@ -264,48 +230,7 @@ namespace Gamelogic.Grids
 				grid[gridPoints[i]] = cells[i];
 			}
 		}
-
-		public void Update()
-		{
-			if(isInteractive) ProcessInput();
-		}
-
-		private void ProcessInput()
-		{
-			if (Input.GetMouseButtonDown(0))
-			{
-				if (grid.Contains(MousePosition))
-				{
-					SendMessageToGridAndCell(MousePosition, "OnLeftClick");
-					SendMessageToGridAndCell(MousePosition, "OnClick");
-				}
-			}
-
-			if (Input.GetMouseButtonDown(1))
-			{
-				if (grid.Contains(MousePosition))
-				{
-					SendMessageToGridAndCell(MousePosition, "OnRightClick");
-					SendMessageToGridAndCell(MousePosition, "OnClick");
-				}
-			}
-
-			if (Input.GetMouseButtonDown(2))
-			{
-				if (grid.Contains(MousePosition))
-				{
-					SendMessageToGridAndCell(MousePosition, "OnMiddleClick");
-					SendMessageToGridAndCell(MousePosition, "OnClick");
-				}
-			}
-		}
-
-		private void SendMessageToGridAndCell(TPoint point, string message)
-		{
-			SendMessage(message, point, SendMessageOptions.DontRequireReceiver);
-			grid[point].SendMessage(message, SendMessageOptions.DontRequireReceiver);
-		}
-
+		
 		#endregion
 
 		#region Abstract methods
@@ -320,8 +245,6 @@ namespace Gamelogic.Grids
 		#region Implementation
 		private void InitUserGrid()
 		{
-			Debug.Log("InitUserGrid");
-
 			var gridInitializer = GetComponent<GridBehaviour<TPoint>>();
 
 			if (gridInitializer != null)
@@ -370,6 +293,7 @@ namespace Gamelogic.Grids
 			{
 				var cell = Instantiate(cellPrefab);
 				cell.transform.parent = transform;
+				cell.transform.localPosition = Vector3.zero;
 				
 				float innerRadius = polarMap.GetInnerRadius(point) + polarGridProperties.border/2;
 				float outerRadius = polarMap.GetOuterRadius(point) - polarGridProperties.border/2;
@@ -377,9 +301,10 @@ namespace Gamelogic.Grids
 				float endAngle = polarMap.GetEndAngleZ(point) - polarGridProperties.border*Mathf.Rad2Deg/outerRadius;
 				int quadCount = Mathf.CeilToInt(outerRadius*2*Mathf.PI/(polarGridProperties.quadSize*Dimensions.X));
 
-				Mesh mesh = new Mesh();
-				MeshUtil.MakeBandedSector(mesh, startAngle, endAngle, innerRadius, outerRadius, quadCount);
+				var mesh = new Mesh();
+				MeshUtils.MakeBandedSector(mesh, startAngle, endAngle, innerRadius, outerRadius, quadCount, v => v);
 				cell.GetComponent<MeshFilter>().sharedMesh = mesh;
+				
 				if (useColor)
 				{
 					var color = colors[colorFunc(point)%colors.Length];
@@ -436,6 +361,9 @@ namespace Gamelogic.Grids
 					break;
 				case MapAlignment.BottomRight:
 					alignmentFunc = windowedMap => windowedMap.AlignBottomRight(grid);
+					break;
+				case MapAlignment.None:
+					alignmentFunc = windowedMap => windowedMap;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();

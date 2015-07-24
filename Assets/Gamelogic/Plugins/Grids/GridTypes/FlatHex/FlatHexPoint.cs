@@ -4,6 +4,8 @@
 // Copyright (c) 2013 Gamelogic (Pty) Ltd       //
 //----------------------------------------------//
 
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,16 @@ namespace Gamelogic.Grids
 		public static readonly FlatHexPoint SouthWest = new FlatHexPoint(-1, 0);
 		public static readonly FlatHexPoint South = new FlatHexPoint(0, -1);
 		public static readonly FlatHexPoint SouthEast = new FlatHexPoint(1, -1);
+
+		public static readonly IEnumerable<FlatHexPoint> MainDirections = new PointList<FlatHexPoint>
+		{
+			NorthEast,
+			North,
+			NorthWest,
+			SouthWest,
+			South,
+			SouthEast
+		};
 
 		/**
 			List of transforms, exlcuding the identity transform.

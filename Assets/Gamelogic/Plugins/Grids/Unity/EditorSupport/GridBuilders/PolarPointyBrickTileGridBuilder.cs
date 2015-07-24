@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using UnityEngine;
 
 namespace Gamelogic.Grids
@@ -46,9 +48,9 @@ namespace Gamelogic.Grids
 
 		#region Properties
 
-		public new PointyHexGrid<TileCell> Grid
+		public new WrappedGrid<MeshTileCell, PointyHexPoint> Grid
 		{
-			get { return (PointyHexGrid<TileCell>) base.Grid; }
+			get { return (WrappedGrid<MeshTileCell, PointyHexPoint>)base.Grid; }
 		}
 
 		public new IMap3D<PointyHexPoint> Map
@@ -73,7 +75,7 @@ namespace Gamelogic.Grids
 			switch (shape)
 			{
 				case Shape.Parallelogram:
-					base.Grid = PointyHexGrid<MeshTileCell>.HorizontallyWrappedParallelogram(width, height);
+					base.Grid = PointyHexGrid<TileCell>.HorizontallyWrappedParallelogram(width, height);
 					break;
 
 				default:
@@ -86,7 +88,10 @@ namespace Gamelogic.Grids
 			switch (mapType)
 			{
 				case MapType.Brick:
-					return new PolarPointyBrickMap(Vector2.zero, polarGridProperties.innerRadius, polarGridProperties.outerRadius,
+					return new PolarPointyBrickMap(
+						Vector2.zero, 
+						polarGridProperties.innerRadius, 
+						polarGridProperties.outerRadius,
 				Dimensions);
 				default:
 					throw new ArgumentOutOfRangeException();

@@ -7,7 +7,7 @@ namespace Gamelogic
 	*/
 	public static class ColorExtensions
 	{
-		private const float LighterFactor = 1.1f;
+		private const float LightOffset = 0.0625f;
 		private const float DarkerFactor = 0.9f;
 
 		/**
@@ -16,9 +16,9 @@ namespace Gamelogic
 		public static Color Lighter(this Color color)
 		{
 			return new Color(
-				color.r*LighterFactor,
-				color.g*LighterFactor,
-				color.b*LighterFactor,
+				color.r + LightOffset,
+				color.g + LightOffset,
+				color.b + LightOffset,
 				color.a);
 		}
 
@@ -28,9 +28,9 @@ namespace Gamelogic
 		public static Color Darker(this Color color)
 		{
 			return new Color(
-				color.r*DarkerFactor,
-				color.g*DarkerFactor,
-				color.b*DarkerFactor,
+				color.r - LightOffset,
+				color.g - LightOffset,
+				color.b - LightOffset,
 				color.a);
 		}
 
@@ -70,7 +70,7 @@ namespace Gamelogic
 		}
 
 		/**
-			Returns wether the color is black or almost black.
+			Returns whether the color is black or almost black.
 		*/
 		public static bool IsApproximatelyBlack(this Color color)
 		{

@@ -11,8 +11,6 @@ using Gamelogic.Editor;
 using UnityEditor;
 using UnityEngine;
 
-using Gamelogic;
-
 namespace Gamelogic.Grids.Editor.Internal
 {
 	public class GLEditor<T> : UnityEditor.Editor

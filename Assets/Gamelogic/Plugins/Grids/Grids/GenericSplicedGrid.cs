@@ -25,6 +25,7 @@ namespace Gamelogic.Grids
 	{
 		private readonly TBasePoint basePoint;
 		private readonly int index;
+		private readonly int spliceCount;
 		
 		public TBasePoint BasePoint 
 		{
@@ -42,10 +43,27 @@ namespace Gamelogic.Grids
 			}
 		}
 
-		public SplicedPoint(TBasePoint basePoint, int index)
+		public int SpliceIndex
+		{
+			get
+			{
+				return index;
+			}
+		}
+
+		public int SpliceCount
+		{
+			get
+			{
+				return spliceCount;
+			}
+		}
+
+		public SplicedPoint(TBasePoint basePoint, int index, int spliceCount)
 		{
 			this.basePoint = basePoint;
 			this.index = index;
+			this.spliceCount = spliceCount;
 		}
 
 		public bool Equals(SplicedPoint<TBasePoint> other)
@@ -108,7 +126,7 @@ namespace Gamelogic.Grids
 			{
 				for (int i = 0; i < spliceCount; i++)
 				{
-					yield return new SplicedPoint<TBasePoint>(point, i);
+					yield return new SplicedPoint<TBasePoint>(point, i, spliceCount);
 				}
 			}
 		}
@@ -165,7 +183,7 @@ namespace Gamelogic.Grids
 			return 
 				from basePoint in baseGrid.GetLargeSet(n)
 				from i in Enumerable.Range(0, spliceCount)
-				select new SplicedPoint<TBasePoint>(basePoint, i);
+				select new SplicedPoint<TBasePoint>(basePoint, i, spliceCount);
 
 		}
 
@@ -174,7 +192,7 @@ namespace Gamelogic.Grids
 			return
 				from basePoint in baseGrid.GetStoragePoints()
 				from i in Enumerable.Range(0, spliceCount)
-				select new SplicedPoint<TBasePoint>(basePoint, i);
+				select new SplicedPoint<TBasePoint>(basePoint, i, spliceCount);
 		}
 	}
 }

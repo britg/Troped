@@ -4,10 +4,10 @@ using Object = UnityEngine.Object;
 namespace Gamelogic.Editor
 {
 	/**
-		Wraps a SerilizedProperty, and provides additional functions, such as
+		Wraps a SerializedProperty, and provides additional functions, such as
 		tooltips and a more powerful Find method.
 
-		@version1_8
+		@version1_2
 	*/
 	public class GLSerializedProperty
 	{
