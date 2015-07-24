@@ -2,9 +2,11 @@
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class MouseGridMove : MonoBehaviour {
+public class MouseGridMove : BaseBehaviour {
 
-	public bool canMove = true;
+	public bool canMove = false;
+
+	int movesThisTurn = 0;
 
 	float distBetweenTiles = 0f;
 	public float tileDistanceFudgeFactor = 0.1f;
@@ -12,11 +14,14 @@ public class MouseGridMove : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		CalcDistanceBetweenTiles();
+		NotificationCenter.AddObserver(this, Constants.OnTurnChange);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		DetectClick();
+		if (canMove) {
+			DetectClick();
+		}
 	}
 
 	void DetectClick () {
@@ -41,18 +46,26 @@ public class MouseGridMove : MonoBehaviour {
 		}
 	}
 
+	Vector3 queuedPosition;
 	void QueueMoveToTile (GameObject tile) {
 		if (!ValidMove(tile)) {
 			return;
 		}
 
-//		transform.position = tile.transform.position;
-		iTween.MoveTo (gameObject, iTween.Hash ("position", tile.transform.position));
+		queuedPosition = tile.transform.position;
+		QueueAction(new GameAction(this, "MoveToQueuedPosition"));
+	}
 
+	void MoveToQueuedPosition () {
+		movesThisTurn++;
+		iTween.MoveTo (gameObject, 
+		               iTween.Hash ("position", queuedPosition,
+		             			    "oncomplete", "TriggerActionFinished"));
 	}
 
 	bool ValidMove (GameObject tile) {
-		return AdjacentToPlayer(tile);
+		return (movesThisTurn < game.player.movesPerTurn) 
+				&& AdjacentToPlayer(tile);
 
 	}
 
@@ -67,5 +80,15 @@ public class MouseGridMove : MonoBehaviour {
 
 		distBetweenTiles = Vector3.Distance(first.transform.position, second.transform.position);
 		distBetweenTiles += tileDistanceFudgeFactor;
+	}
+
+	void OnTurnChange (Notification n) {
+		Turn turn = (Turn)n.data["turn"];
+		if (turn == Turn.Player) {
+			movesThisTurn = 0;
+			canMove = true;
+		} else {
+			canMove = false;
+		}
 	}
 }
