@@ -6,8 +6,6 @@ public class MouseGridMove : BaseBehaviour {
 
 	public bool canMove = false;
 
-	int movesThisTurn = 0;
-
 	float distBetweenTiles = 0f;
 	public float tileDistanceFudgeFactor = 0.1f;
 
@@ -57,14 +55,16 @@ public class MouseGridMove : BaseBehaviour {
 	}
 
 	void MoveToQueuedPosition () {
-		movesThisTurn++;
+		game.player.movesThisTurn++;
 		iTween.MoveTo (gameObject, 
 		               iTween.Hash ("position", queuedPosition,
+		             				"easetype", iTween.EaseType.linear,
+		             				"time", 0.2f,
 		             			    "oncomplete", "TriggerActionFinished"));
 	}
 
 	bool ValidMove (GameObject tile) {
-		return (movesThisTurn < game.player.movesPerTurn) 
+		return (game.player.movesThisTurn < game.player.movesPerTurn) 
 				&& AdjacentToPlayer(tile);
 
 	}
