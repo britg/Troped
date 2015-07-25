@@ -13,6 +13,10 @@ public class TurnManager : BaseBehaviour {
 	
 	}
 
+  public void QueueEndTurn () {
+    QueueAction(new GameAction(this, "EndTurn"));
+  }
+
 	void EndTurn () {
 		//TODO: Announce the turn is ending so cleanup can be done.
 		ChangeTurn();

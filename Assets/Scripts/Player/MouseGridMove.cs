@@ -38,7 +38,7 @@ public class MouseGridMove : BaseBehaviour {
 		if (Physics.Raycast(ray, out hit, 1000)) {
 			var obj = hit.collider.gameObject;
 
-			if (obj.tag == "Tile") {
+			if (obj.tag == Constants.TileLayer) {
 				QueueMoveToTile(obj);
 			}
 		}
@@ -64,8 +64,23 @@ public class MouseGridMove : BaseBehaviour {
 	}
 
 	bool ValidMove (GameObject tile) {
-		return (game.player.movesThisTurn < game.player.movesPerTurn) 
-				&& AdjacentToPlayer(tile);
+    bool enoughMoves = game.player.movesThisTurn < game.player.movesPerTurn;
+    if (!enoughMoves) {
+      return false;
+    }
+
+    bool adjacent = AdjacentToPlayer(tile);
+    if (!adjacent) {
+      return false;
+    }
+
+
+    bool same = Vector3.Equals(tile.transform.position, transform.position);
+    if (same) {
+      return false;
+    }
+
+    return true;
 
 	}
 
@@ -85,7 +100,7 @@ public class MouseGridMove : BaseBehaviour {
 	void OnTurnChange (Notification n) {
 		Turn turn = (Turn)n.data["turn"];
 		if (turn == Turn.Player) {
-			movesThisTurn = 0;
+			game.player.movesThisTurn = 0;
 			canMove = true;
 		} else {
 			canMove = false;

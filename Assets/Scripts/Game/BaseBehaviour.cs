@@ -23,11 +23,22 @@ public class BaseBehaviour : MonoBehaviour {
 		}
 	}
 
+  private ActionQueue _actionQueue;
+  public ActionQueue actionQueue {
+    get {
+      if (_actionQueue == null) {
+        _actionQueue = GameObject.Find("ActionQueue").GetComponent<ActionQueue>();
+      }
+
+      return _actionQueue;
+    }
+  }
+
 	protected void QueueAction (GameAction action) {
-		game.actionQueue.Add(action);
+		actionQueue.Add(action);
 	}
 
 	protected void TriggerActionFinished () {
-		game.actionQueue.Finish();
+		actionQueue.Finish();
 	}
 }

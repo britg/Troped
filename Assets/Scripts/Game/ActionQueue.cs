@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ActionQueue {
+public class ActionQueue : BaseBehaviour {
 
 	Queue queue = new Queue();
 	GameAction currentAction;
@@ -10,7 +10,7 @@ public class ActionQueue {
 		queue.Enqueue(action);
 	}
 
-	public void Tick () {
+	public void Update () {
 		if (currentAction == null) {
 			Next();
 		}
