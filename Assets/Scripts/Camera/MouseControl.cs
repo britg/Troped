@@ -32,6 +32,7 @@ public class MouseControl : MonoBehaviour {
 		var _ang = transform.eulerAngles;
 		x = _ang.y;
 		y = _ang.x;
+    target = GameObject.Find("Player").transform;
 		distance = Vector3.Distance(target.position, transform.position);
 
 		lastMousePosition = Input.mousePosition;

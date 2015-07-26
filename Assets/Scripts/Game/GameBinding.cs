@@ -5,21 +5,31 @@ public class GameBinding : BaseBehaviour {
 
   public new Game game;
 
+  public GameObject hexPrefab;
+  public GameObject playerPrefab;
+
 	void Awake () {
 		game = new Game();
     game.binding = this;
 		game.Init();
+
+    CreateLevel();
 	}
+
+  void CreateLevel () {
+
+    foreach (Vector3 tilePos in game.level.tiles) {
+      var hex = (GameObject)Instantiate(hexPrefab);
+      hex.transform.position = tilePos;
+    }
+
+    var playerObj = (GameObject)Instantiate(playerPrefab);
+    playerObj.transform.position = game.level.playerTile;
+    playerObj.name = "Player";
+  }
 
 	// Use this for initialization
 	void Start () {
-    var center = GameObject.Find("(0, 0)");
-    var diag = GameObject.Find("(1, 0)");
-    var up = GameObject.Find("(0, 1)");
-
-    var diagdist = Vector3.Distance(center.transform.position, diag.transform.position);
-    var updist = Vector3.Distance(center.transform.position, up.transform.position);
-
 
 	}
 	

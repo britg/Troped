@@ -5,12 +5,16 @@ using System.Collections.Generic;
 public class Game {
 
   public GameBinding binding;
+
+  public Level level;
 	public Player player;
 	public Turn turn;
 
   public List<Enemy> enemies;
 
 	public void Init () {
+    level = new Level();
+    level.Init();
 		player = new Player();
 		turn = Turn.None;
     enemies = new List<Enemy>();

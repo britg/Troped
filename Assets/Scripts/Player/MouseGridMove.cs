@@ -87,11 +87,7 @@ public class MouseGridMove : BaseBehaviour {
 	}
 
 	void CalcDistanceBetweenTiles () {
-		var first = GameObject.Find ("(0, -9)");
-		var second = GameObject.Find ("(0, -8)");
-
-		distBetweenTiles = Vector3.Distance(first.transform.position, second.transform.position);
-		distBetweenTiles += tileDistanceFudgeFactor;
-	}
+    distBetweenTiles = 4f * 1.1094f;
+  }
 
 }
