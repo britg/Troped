@@ -8,4 +8,14 @@ public class Player {
 	public int totalActionPoints = 10;
 	public int usedActionPoints = 10;
 
+
+  public bool canMove {
+    get {
+      return movesThisTurn < movesPerTurn;
+    }
+  }
+
+  public void NewTurn () {
+    movesThisTurn = 0;
+  }
 }

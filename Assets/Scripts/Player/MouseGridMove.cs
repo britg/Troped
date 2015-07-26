@@ -4,20 +4,17 @@ using System.Collections;
 
 public class MouseGridMove : BaseBehaviour {
 
-	public bool canMove = false;
-
 	float distBetweenTiles = 0f;
 	public float tileDistanceFudgeFactor = 0.1f;
 
 	// Use this for initialization
 	void Start () {
 		CalcDistanceBetweenTiles();
-		NotificationCenter.AddObserver(this, Constants.OnTurnChange);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (canMove) {
+		if (game.player.canMove) {
 			DetectClick();
 		}
 	}
@@ -97,13 +94,4 @@ public class MouseGridMove : BaseBehaviour {
 		distBetweenTiles += tileDistanceFudgeFactor;
 	}
 
-	void OnTurnChange (Notification n) {
-		Turn turn = (Turn)n.data["turn"];
-		if (turn == Turn.Player) {
-			game.player.movesThisTurn = 0;
-			canMove = true;
-		} else {
-			canMove = false;
-		}
-	}
 }

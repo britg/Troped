@@ -29,4 +29,5 @@ public class TurnManager : BaseBehaviour {
 		                                    iTween.Hash("turn", game.turn));
 		TriggerActionFinished();
 	}
+
 }
