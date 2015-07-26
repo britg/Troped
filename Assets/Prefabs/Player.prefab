@@ -28,6 +28,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 416870}
   - 114: {fileID: 11485716}
+  - 114: {fileID: 11493054}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1184,7 +1185,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8faedf65ad97e40ed81c88fafd701e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileDistanceFudgeFactor: .100000001
 --- !u!114 &11488440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1204,6 +1204,17 @@ MonoBehaviour:
   size: {x: 1, y: 1, z: 1}
   userSetDimensions: 0
   _entityType: 4
+--- !u!114 &11493054
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 125336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb0477bd9a03dc145b1677848d79109b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -11,6 +11,7 @@ public class Level {
   int tileSize = 4;
   public List<Vector3> tiles;
   public Vector3 playerTile;
+  public float playerRotation;
 
   public List<Enemy> Enemies () {
     var enemies = new List<Enemy>();
@@ -20,7 +21,8 @@ public class Level {
 
   public void Init () {
     CreateTiles();
-    PlacePlayerRandomly();
+    RandomPlayerPosition();
+    RandomPlayerRotation();
     // Place the entrance, set the player there
     // place the exit
     // Place obstacles
@@ -48,9 +50,14 @@ public class Level {
     }
   }
 
-  void PlacePlayerRandomly () {
+  void RandomPlayerPosition () {
     int rand = Random.Range(0, tiles.Count-1);
     playerTile = tiles[rand];
+  }
+
+  void RandomPlayerRotation () {
+    int rand = Random.Range(0, 6);
+    playerRotation = 60f * rand;
   }
 
   /*

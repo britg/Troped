@@ -11,6 +11,7 @@ public class Player {
   float maxMoveDistance = 5f; // magic number
 
   public Vector3 pos;
+  public float rotation;
 
 
   public bool canMove {
