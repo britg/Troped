@@ -16,6 +16,7 @@ public class Game {
     level = new Level();
     level.Init();
 		player = new Player();
+    player.pos = level.playerTile;
 		turn = Turn.None;
     enemies = new List<Enemy>();
 	}

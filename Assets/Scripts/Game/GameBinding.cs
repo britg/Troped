@@ -24,7 +24,7 @@ public class GameBinding : BaseBehaviour {
     }
 
     var playerObj = (GameObject)Instantiate(playerPrefab);
-    playerObj.transform.position = game.level.playerTile;
+    playerObj.transform.position = game.player.pos;
     playerObj.name = "Player";
   }
 
